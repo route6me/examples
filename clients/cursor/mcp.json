@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "route6": {
+      "url": "https://gw.route6.me/mcp",
+      "headers": {
+        "Authorization": "Bearer ${ROUTE6_API_KEY}"
+      }
+    }
+  }
+}
