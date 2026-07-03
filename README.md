@@ -33,7 +33,7 @@ See [`docker/`](docker/) — `docker compose up` with your API key in `.env`.
 
 ## Editor / agent client configs
 
-Config snippets to wire Route6's MCP tools into your coding agent: [Cursor / Windsurf](clients/cursor/) · [Cline](clients/cline/) · [Continue](clients/continue/) · [Hermes](clients/hermes/) · [Aider](clients/aider/) — plus the full [27-tool parameter reference](clients/hermes/references/tools.md).
+Config snippets to wire Route6's MCP tools into your agent framework or editor: [n8n](clients/n8n/) · [LangChain / LangGraph](clients/langchain/) · [Cursor / Windsurf](clients/cursor/) · [Cline](clients/cline/) · [Continue](clients/continue/) · [Hermes](clients/hermes/) — plus the full [27-tool parameter reference](clients/hermes/references/tools.md).
 
 Claude Code (one command):
 
