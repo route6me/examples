@@ -91,18 +91,18 @@ DNS propagation takes up to 60 seconds. The hostname tracks your active IPv6 —
 port_forward_create { external_port, internal_port, protocol, ttl_seconds? }
 port_forward_list                → active forwards with bridge status
 port_forward_delete              → remove a forward
-port_forward_tls { action: "enable"|"disable" }  → Route6 TLS termination
+port_forward_tls { port, action: "enable"|"disable" }  → Route6 TLS termination
 ```
 
 - Exposes a port on your **public IPv6** (and hostname if registered), bridged to the host machine. Max 10 forwards.
 - `ttl_seconds` auto-expires the forward — good for one-shot OAuth callbacks or webhooks.
 - Default is TCP passthrough (your own TLS runs end-to-end). `port_forward_tls enable` switches to Route6's `*.on.route6.me` wildcard cert — instant valid HTTPS, **requires a registered hostname**.
-- Webhook recipe: `hostname_register { name }` → `port_forward_create { external_port: 8443, internal_port: 8080, protocol: "tcp" }` → `port_forward_tls { action: "enable" }` → give out `https://mybot.on.route6.me:8443/hook`.
+- Webhook recipe: `hostname_register { name }` → `port_forward_create { external_port: 8443, internal_port: 8080, protocol: "tcp" }` → `port_forward_tls { port: 8443, action: "enable" }` → give out `https://mybot.on.route6.me:8443/hook`.
 
 ## Network diagnostics
 
 ```
-net_ping { host }         net_traceroute { host }         net_dns_resolve { host }
+net_ping { host }         net_traceroute { host }         net_dns_resolve { hostname }
 ```
 
 All run from your IPv6 identity. IPv4-only targets work transparently (DNS64/NAT64) — an AAAA answer starting `64:ff9b::` is a NAT64-synthesized IPv4 address, not an error.
@@ -126,7 +126,7 @@ scrape { action: "balance" | "topup" }     → manage scraper credits
 Outbound SMTP (ports 25/465/587) is **blocked by default** for all agents — abuse protection. To send mail, allowlist up to 3 destination servers:
 
 ```
-smtp_allowlist { action: "add" | "list" | "remove", hostname? }
+smtp_allowlist { action: "add" | "list" | "remove", address? }
 ```
 
 ## Team coordination (Team plan)

@@ -17,3 +17,7 @@ mcp_servers:
 ```
 
 3. Restart Hermes — all 27 Route6 tools are discovered at startup.
+
+## Render rule
+
+Do **not** edit `SKILL.md` here — it is generated from the shared Route6 skill source (`render.py` in the route6-skills render set) so all client renders stay identical. `references/tools.md` is generated from the `@route6/mcp-core` tool schemas.

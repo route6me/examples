@@ -18,14 +18,16 @@ or agent-driven on the Pro container:
 
 ```jsonc
 hostname_register   { "name": "data-agent" }
-port_forward_create { "external_port": 443, "internal_port": 9000, "protocol": "tcp" }
-port_forward_tls    { "port": 443, "action": "enable" }
+port_forward_create { "external_port": 8443, "internal_port": 9000, "protocol": "tcp" }
+port_forward_tls    { "port": 8443, "action": "enable" }
+// external_port must be 1024-65535 (and not 3000 — reserved for the MCP server)
 ```
 
 ## Consume (from any other agent, any plan — plain HTTPS)
 
 ```jsonc
-web_fetch { "url": "https://data-agent.on.route6.me/status.json" }
+web_fetch { "url": "https://data-agent.on.route6.me/status.json" }        // lite-tunnel path (port 443)
+web_fetch { "url": "https://data-agent.on.route6.me:8443/status.json" }   // Pro port-forward path
 ```
 
 The consuming agent needs no special setup — `*.on.route6.me` is public DNS with valid TLS. If both agents are on the same Team, they can additionally reach each other over the private mesh (see [example 03](../03-agent-team-coordination/)) without touching the public internet at all.

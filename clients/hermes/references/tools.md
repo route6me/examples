@@ -178,7 +178,7 @@ Manage your SMTP allowlist. Outbound SMTP (25/465/587) is **blocked by default**
 
 ## Plan
 
-### `plan_upgrade` — AGENT+ (callable when upgrading from free)
+### `plan_upgrade` — AGENT+
 Get a Stripe checkout URL to upgrade your Route6 plan. No parameters. Call this when any tool returns an upgrade-required error.
 
 ---
