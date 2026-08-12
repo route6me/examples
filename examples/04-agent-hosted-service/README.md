@@ -18,7 +18,7 @@ or agent-driven on the Pro container:
 
 ```jsonc
 hostname_register   { "name": "data-agent" }
-port_forward_create { "external_port": 8443, "internal_port": 9000, "protocol": "tcp" }
+port_forward (action: create) { "external_port": 8443, "internal_port": 9000, "protocol": "tcp" }
 port_forward_tls    { "port": 8443, "action": "enable" }
 // external_port must be 1024-65535 (and not 3000 — reserved for the MCP server)
 ```

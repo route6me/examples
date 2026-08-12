@@ -1,8 +1,8 @@
 # Route6 Examples
 
-**Give your AI agent its own internet identity** — a real public IPv6, a DNS hostname, inbound tunnels, and a private network to reach other agents. Controlled by the agent itself through 27 MCP tools. Free tier, no card.
+**Give your AI agent its own internet identity** — a real public IPv6, a DNS hostname, inbound tunnels, and a private network to reach other agents. Controlled by the agent itself through 23 MCP tools. Free tier, no card.
 
-Route6 is an alternative to ngrok/tunneling hacks and shared proxy pools, built for autonomous agents: the IP and hostname are *stable* (they survive restarts), the agent manages them itself over MCP, and every agent gets a dedicated `/64` from Route6's own address space.
+Route6 is an alternative to ngrok/tunneling hacks and shared proxy pools, built for autonomous agents: the IP and hostname are *stable* (they survive restarts), the agent manages them itself over MCP, and your organisation gets a dedicated `/64` from Route6's own address space, and every agent its own address inside it.
 
 - Website: https://route6.me · Docs: https://docs.route6.me
 - Lite client: [`npm i -g @route6/agent`](https://www.npmjs.com/package/@route6/agent) · [`pip install route6`](https://pypi.org/project/route6/)
@@ -15,10 +15,10 @@ npm install -g @route6/agent
 route6 login sk_a6_...            # free key from https://route6.me
 route6 tunnel start --hostname my-agent --to 8080
 # → https://my-agent.on.route6.me now reaches localhost:8080
-# → MCP proxy live at http://127.0.0.1:3000/mcp (all 27 tools for your editor/agent)
+# → MCP proxy live at http://127.0.0.1:3000/mcp (all 23 tools for your editor/agent)
 ```
 
-## Quick start (Pro — Docker, full WireGuard tunnel, routed /64 on the container)
+## Quick start (Pro — Docker, full WireGuard tunnel, public /64 on the container)
 
 See [`docker/`](docker/) — `docker compose up` with your API key in `.env`.
 
@@ -27,7 +27,7 @@ See [`docker/`](docker/) — `docker compose up` with your API key in `.env`.
 | Example | What it shows | Plan |
 |---------|---------------|------|
 | [01 — Public webhook URL](examples/01-public-webhook-url/) | Stable public HTTPS endpoint for webhooks / OAuth callbacks (the ngrok use-case, minus the ephemerality) | Free key + lite, or Agent |
-| [02 — Clean per-agent IP](examples/02-clean-ip-web-fetch/) | Fetch from your agent's own IP; check reputation; rotate inside your /64 when blocked | Free |
+| [02 — Clean per-agent IP](examples/02-clean-ip-web-fetch/) | Fetch from your agent's own IP; check reputation; rotate inside your own /112 slice when blocked | Free |
 | [03 — Agent team coordination](examples/03-agent-team-coordination/) | Two agents share state (whiteboard), advertise capabilities, and hand off work (task queue) | Team |
 | [04 — Agent-hosted service](examples/04-agent-hosted-service/) | An agent serves an API other agents reach by name | Agent |
 

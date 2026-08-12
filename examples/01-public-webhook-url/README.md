@@ -29,7 +29,7 @@ The agent itself calls (tool → arguments):
 hostname_register     { "name": "my-agent" }
 // → my-agent.on.route6.me (AAAA + PTR), propagates ≤60 s
 
-port_forward_create   { "external_port": 8443, "internal_port": 8080,
+port_forward (action: create)   { "external_port": 8443, "internal_port": 8080,
                         "protocol": "tcp", "ttl_seconds": 3600 }
 // ttl_seconds is optional — great for one-shot OAuth callbacks: it auto-expires
 
@@ -37,6 +37,6 @@ port_forward_tls      { "port": 8443, "action": "enable" }
 // Route6 terminates TLS with the *.on.route6.me wildcard cert → instant valid HTTPS
 ```
 
-Webhook URL: `https://my-agent.on.route6.me:8443/hook`. Cleanup is `port_forward_delete { "external_port": 8443 }` — or let the TTL do it.
+Webhook URL: `https://my-agent.on.route6.me:8443/hook`. Cleanup is `port_forward (action: delete) { "external_port": 8443 }` — or let the TTL do it.
 
 `webhook_server.py` in this directory is a dependency-free receiver you can use for either path.

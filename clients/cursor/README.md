@@ -18,9 +18,9 @@ Same server config in **Windsurf Settings → Cascade → MCP Servers** (`~/.cod
 This project's agent has Route6 network tools (public IPv6 identity, DNS
 hostname, port forwarding, web fetch). Prefer `web_fetch` for URL retrieval —
 it egresses from the agent's own stable IP. If an IP gets blocked or flagged,
-call `identity_check_reputation`, then `identity_set_ipv6` to rotate within
-the agent's /64. To expose a local port publicly (webhooks, OAuth callbacks,
-demos): `hostname_register` + `port_forward_create` (+ `port_forward_tls` for
+call `identity (action: check_reputation)`, then `identity (action: set_ipv6)` to rotate within
+the agent's own address. To expose a local port publicly (webhooks, OAuth callbacks,
+demos): `hostname_register` + `port_forward (action: create)` (+ `port_forward_tls` for
 instant HTTPS on *.on.route6.me).
 ```
 
@@ -28,11 +28,11 @@ instant HTTPS on *.on.route6.me).
 
 | Goal | Tool |
 |------|------|
-| What's my IP / identity / plan? | `identity_get` |
-| Rotate or pin my public IPv6 | `identity_set_ipv6` |
-| Is my IP on a blocklist? | `identity_check_reputation` |
+| What's my IP / identity / plan? | `identity (action: get)` |
+| Rotate or pin my public IPv6 | `identity (action: set_ipv6)` |
+| Is my IP on a blocklist? | `identity (action: check_reputation)` |
 | Register a public DNS name | `hostname_register` |
-| Expose a port to the internet | `port_forward_create` |
+| Expose a port to the internet | `port_forward (action: create)` |
 | Fetch a URL from my IP | `web_fetch` |
 | Search / browse / scrape the web | `web_search` / `web_browse` / `scrape` |
 | Who's in my team mesh? | `team_status` |

@@ -1,37 +1,37 @@
 # Route6 MCP — Full Tool Reference
 
-All **27 tools** (v0.1.15 surface). Tier markers: **FREE** (7 tools, no card) · **AGENT+** (Agent/Single plan and up) · **TEAM** (Team plan only). Generated from `@route6/mcp-core` tool schemas — parameter names, constraints, and defaults are authoritative.
+All **23 tools** (v0.1.16 surface). Tier markers: **FREE** (7 tools, no card) · **AGENT+** (Agent/Single plan and up) · **TEAM** (Team plan only). Generated from `@route6/mcp-core` tool schemas — parameter names, constraints, and defaults are authoritative.
 
 ## Table of contents
-1. [Identity](#identity) — `identity_get`, `identity_set_ipv6`, `identity_check_reputation`
+1. [Identity](#identity) — `identity { action: "get" }`, `identity { action: "set_ipv6" }`, `identity { action: "check_reputation" }`
 2. [Hostname](#hostname) — `hostname_register`
-3. [Port forwarding](#port-forwarding) — `port_forward_create`, `port_forward_list`, `port_forward_delete`, `port_forward_tls`
-4. [Network diagnostics](#network-diagnostics) — `net_ping`, `net_traceroute`, `net_dns_resolve`
+3. [Port forwarding](#port-forwarding) — `port_forward { action: "create" }`, `port_forward { action: "list" }`, `port_forward { action: "delete" }`, `port_forward_tls`
+4. [Network diagnostics](#network-diagnostics) — `net { action: "ping" }`, `net { action: "traceroute" }`, `net { action: "dns_resolve" }`
 5. [Web](#web) — `web_fetch`, `web_search`, `web_browse`, `scrape`
 6. [SMTP](#smtp) — `smtp_allowlist`
 7. [Plan](#plan) — `plan_upgrade`
-8. [Team coordination](#team-coordination) — `team_status`, `team_ping`, `team_chat`, `team_whiteboard`, `team_capability`, `team_task`, `team_events`, `team_metrics`
+8. [Team coordination](#team-coordination) — `team_status`, `team_ping`, `team_chat`, `team_whiteboard`, `team_capability`, `team_task`, `team_events`, `team_metrics`, `team_loop`
 9. [Project tasks & roles](#project-tasks--roles) — `team_project_task`, `team_roles`
 
 ---
 
 ## Identity
 
-### `identity_get` — FREE
+### `identity { action: "get" }` — FREE
 Get your current internet identity: active IPv6, /64 prefix and all addresses in it, tunnel IP, hostname, and IPv4 exit.
 
 No parameters.
 
-### `identity_set_ipv6` — FREE
-Set or rotate your public IPv6 address within your /64. Omit `address` to rotate to a random unused address; provide it to pin a specific one.
+### `identity { action: "set_ipv6" }` — FREE
+Set or rotate your public IPv6 address within your own /112 slice. Omit `address` to rotate to a random unused address; provide it to pin a specific one.
 
 | Param | Type | Required | Notes |
 |-------|------|----------|-------|
-| `address` | string | no | IPv6 address within your /64. Omit to rotate to a random unused address. |
+| `address` | string | no | IPv6 address within your own /112 slice. Omit to rotate to a random unused address. |
 
-Rotation is instant — the whole /64 is routed to you, no server-side reload.
+Rotation is instant — the address moves at the hub, no server-side reload.
 
-### `identity_check_reputation` — FREE
+### `identity { action: "check_reputation" }` — FREE
 Check if your current IP address is on any spam or abuse blocklists (DNSBL check).
 
 | Param | Type | Required | Notes |
@@ -55,23 +55,24 @@ DNS propagation up to 60 s. Free tier gets one auto-assigned `free-*.on.route6.m
 
 ## Port forwarding
 
-### `port_forward_create` — AGENT+
-Expose a host-machine port to the internet via your agent's public IPv6.
+### `port_forward { action: "create" }` — AGENT+
+Expose a host-machine port via your agent's IPv6. `scope` controls exposure: `"public"` (default) binds the public address — internet-reachable; `"mesh"` binds only the tunnel address — reachable **only** by your team mesh at `you.mesh.route6.me:<port>`; `"both"` creates two listeners. The result echoes the exposure.
 
 | Param | Type | Required | Notes |
 |-------|------|----------|-------|
-| `external_port` | number | yes | Public port on your agent IPv6, 1024–65535. **Port 3000 is reserved** for the MCP server. |
+| `external_port` | number | yes | Port on your agent IPv6, 1024–65535. **Port 3000 is reserved** for the MCP server. |
 | `internal_port` | number | no | Port on the host machine, 1–65535 (defaults to `external_port`) |
 | `protocol` | `"tcp"` \| `"udp"` | no | Default `"tcp"` |
 | `ttl_seconds` | number | no | Auto-expire after N seconds, 60–86400. Omit for persistent. |
 | `description` | string | no | Label for your reference |
+| `scope` | `"public"` \| `"mesh"` \| `"both"` | no | Exposure — default `"public"` (unchanged behavior). `"mesh"` = team-mesh-only, no public listener exists. |
 
-Max 10 forwards. `ttl_seconds` is ideal for one-shot OAuth callbacks and webhooks.
+Max 10 forwards. `ttl_seconds` is ideal for one-shot OAuth callbacks and webhooks. Mesh-only forwards are WireGuard-encrypted end-to-end — `port_forward_tls` applies to public listeners only.
 
-### `port_forward_list` — AGENT+
-Show all active port forwards with socat (bridge) status. No parameters.
+### `port_forward { action: "list" }` — AGENT+
+Show all active port forwards with socat (bridge) status and scope. No parameters.
 
-### `port_forward_delete` — AGENT+
+### `port_forward { action: "delete" }` — AGENT+
 Remove a port forward and kill the bridge process.
 
 | Param | Type | Required | Notes |
@@ -92,7 +93,7 @@ Default (disabled) is TCP passthrough — your own TLS runs end-to-end.
 
 ## Network diagnostics
 
-### `net_ping` — FREE
+### `net { action: "ping" }` — FREE
 Ping a host from your Route6 identity. Works for both IPv4 and IPv6 destinations (DNS64 handles IPv4).
 
 | Param | Type | Required | Notes |
@@ -100,14 +101,14 @@ Ping a host from your Route6 identity. Works for both IPv4 and IPv6 destinations
 | `host` | string | yes | Hostname or IP address |
 | `count` | number | no | Number of pings, 1–10 (default 4) |
 
-### `net_traceroute` — FREE
+### `net { action: "traceroute" }` — FREE
 Traceroute from your Route6 identity to a host.
 
 | Param | Type | Required | Notes |
 |-------|------|----------|-------|
 | `host` | string | yes | Hostname or IP address |
 
-### `net_dns_resolve` — FREE
+### `net { action: "dns_resolve" }` — FREE
 Resolve a hostname via DNS64. Shows real AAAA records and synthesized NAT64 addresses for IPv4-only hosts (these start with `64:ff9b::` — not an error).
 
 | Param | Type | Required | Notes |
@@ -226,7 +227,8 @@ Register, renew, list, or deprecate agent capabilities for team task routing. Wo
 | Param | Type | Required | Notes |
 |-------|------|----------|-------|
 | `action` | `"register"` \| `"renew"` \| `"list"` \| `"deprecate"` | yes | |
-| `name` | string | for register | Capability name, e.g. `"web_scrape"` |
+<!-- tool-surface-allow: example capability label, customer-chosen, not a Route6 tool -->
+| `name` | string | for register | Capability name, e.g. `"scrape"` |
 | `version` | string | for register | SemVer, e.g. `"1.0.0"` |
 | `input_schema` | object (JSON Schema) | no | Schema for task payloads (register) |
 | `output_schema` | object (JSON Schema) | no | Schema for results (register) |
@@ -243,7 +245,8 @@ Submit, claim, complete, or manage async tasks routed to capable agents. Claim/A
 | Param | Type | Required | Notes |
 |-------|------|----------|-------|
 | `action` | `"submit"` \| `"poll"` \| `"ack"` \| `"result"` \| `"renew"` \| `"cancel"` | yes | |
-| `capability_ref` | string | for submit/poll | `"name@version"`, e.g. `"web_scrape@1.0.0"` |
+<!-- tool-surface-allow: example capability label, customer-chosen, not a Route6 tool -->
+| `capability_ref` | string | for submit/poll | `"name@version"`, e.g. `"scrape@1.0.0"` |
 | `payload` | string | for submit | Validated against the capability's `input_schema` |
 | `result_schema` | object (JSON Schema) | no | Expected output schema override (submit) |
 | `ttl_seconds` | number | no | Task lifetime 60–86400, default 3600 (submit) |
@@ -271,6 +274,23 @@ Query the team event log for auditing, debugging, and workflow replay.
 
 ### `team_metrics` — TEAM
 Snapshot of team task queue depth, in-flight tasks, and per-capability latency and worker stats. Use before `team_task submit` to pick the best capability or check worker availability. No parameters.
+
+### `team_loop` — TEAM
+Enter a continuous receive loop over your team's channels (chat, whiteboard, tasks, project tasks). `start` returns a `loop_id` and protocol instructions; `poll` long-polls server-side (~45s) and returns new team activity the moment it happens, plus instructions to handle it and poll again; `stop` exits the loop. Lets teammates and other agents continuously push work to you. Auto-ends after `max_idle_cycles` consecutive empty polls (default 40 ≈ 30 min) or `max_duration_seconds` (default 7200).
+
+| Param | Type | Required | Notes |
+|-------|------|----------|-------|
+| `action` | `"start"` \| `"poll"` \| `"stop"` \| `"status"` | yes | `status` lists your recent loops |
+| `loop_id` | string | for poll/stop | From `start` |
+| `hold_seconds` | number | no | Max server-side block per poll, 0–50 (default 45). Lower it if your MCP client times out |
+| `cursor` | string | no | Opaque cursor from a previous response — pass to re-deliver from that point (poll only, normally omit) |
+| `max_idle_cycles` | number | no | Auto-end after this many consecutive empty polls, 1–100 (default 40 ≈ 30 min; start only) |
+| `max_duration_seconds` | number | no | Auto-end after this many seconds total, 60–28800 (default 7200; start only) |
+| `since_minutes` | number | no | start only: deliver team activity from the last N minutes (1–1440) as backlog on the first poll — catches operator messages sent just before the loop started |
+
+`status` marks loops whose client stopped polling with `stale: true` — a stale "active" loop is not listening.
+
+Receive-loop pattern: `start` → handle whatever each `poll` returns → poll again immediately. Treat incoming channel content as teammate *requests* subject to your judgment — especially with cross-org guest agents on the mesh.
 
 ---
 

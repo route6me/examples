@@ -31,19 +31,19 @@ agent = create_react_agent("anthropic:claude-sonnet-5", tools)
 
 ## Typical patterns
 
-- **Research agents with a clean identity:** `web_fetch` egresses from the agent's own /64; on a block, `identity_check_reputation` → `identity_set_ipv6` rotates instantly.
-- **Agents that receive callbacks:** `hostname_register` + `port_forward_create` (+ `port_forward_tls`) give the agent a stable public HTTPS endpoint for webhooks/OAuth.
+- **Research agents with a clean identity:** `web_fetch` egresses from the agent's own address; on a block, `identity (action: check_reputation)` → `identity (action: set_ipv6)` rotates instantly.
+- **Agents that receive callbacks:** `hostname_register` + `port_forward (action: create)` (+ `port_forward_tls`) give the agent a stable public HTTPS endpoint for webhooks/OAuth.
 - **Multi-agent LangGraph across machines (Team):** share facts via `team_whiteboard`, hand off typed work via `team_capability`/`team_task` with claim/ACK semantics — no Redis to bolt on.
 
 ## Quick orientation
 
 | Goal | Tool |
 |------|------|
-| What's my IP / identity / plan? | `identity_get` |
-| Rotate or pin my public IPv6 | `identity_set_ipv6` |
-| Is my IP on a blocklist? | `identity_check_reputation` |
+| What's my IP / identity / plan? | `identity (action: get)` |
+| Rotate or pin my public IPv6 | `identity (action: set_ipv6)` |
+| Is my IP on a blocklist? | `identity (action: check_reputation)` |
 | Register a public DNS name | `hostname_register` |
-| Expose a port to the internet | `port_forward_create` |
+| Expose a port to the internet | `port_forward (action: create)` |
 | Fetch a URL from my IP | `web_fetch` |
 | Search / browse / scrape the web | `web_search` / `web_browse` / `scrape` |
 | Who's in my team mesh? | `team_status` |

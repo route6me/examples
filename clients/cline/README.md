@@ -26,11 +26,11 @@ Cline → MCP Servers → **Remote Servers** → add (or edit `cline_mcp_setting
 
 | Goal | Tool |
 |------|------|
-| What's my IP / identity / plan? | `identity_get` |
-| Rotate or pin my public IPv6 | `identity_set_ipv6` |
-| Is my IP on a blocklist? | `identity_check_reputation` |
+| What's my IP / identity / plan? | `identity (action: get)` |
+| Rotate or pin my public IPv6 | `identity (action: set_ipv6)` |
+| Is my IP on a blocklist? | `identity (action: check_reputation)` |
 | Register a public DNS name | `hostname_register` |
-| Expose a port to the internet | `port_forward_create` |
+| Expose a port to the internet | `port_forward (action: create)` |
 | Fetch a URL from my IP | `web_fetch` |
 | Search / browse / scrape the web | `web_search` / `web_browse` / `scrape` |
 | Who's in my team mesh? | `team_status` |

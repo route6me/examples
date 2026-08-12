@@ -2,13 +2,13 @@
 
 **Problem:** agents that fetch the web from shared proxy pools inherit the pool's reputation — blocklists, CAPTCHAs, bans. Residential proxies are expensive and opaque.
 
-**With Route6** every agent has a dedicated public IPv6 /64 from Route6's own address space (own ASN, own abuse contact, forward-confirmed rDNS). Your agent fetches from *its* IP, checks *its* reputation, and rotates inside *its own* /64 — instantly, because the whole /64 is routed to the agent.
+**With Route6** every agent has its own public IPv6 address in your dedicated /64 from Route6's own address space (own ASN, own abuse contact, forward-confirmed rDNS). Your agent fetches from *its* IP, checks *its* reputation, and rotates inside *its own* /112 slice — instantly, because rotation is a control-plane write, not a route change.
 
 All four tools below are on the **free tier**.
 
 ```jsonc
 // who am I?
-identity_get              {}
+identity (action: get)              {}
 // → active IPv6, the /64 prefix, hostname, plan
 
 // fetch from my IP
@@ -16,17 +16,17 @@ web_fetch                 { "url": "https://api.ipify.org?format=json" }
 // → shows YOUR agent IP as the source
 
 // is my IP on a blocklist?
-identity_check_reputation {}
+identity (action: check_reputation) {}
 // → DNSBL results for the active address
 
 // listed somewhere, or just want a fresh address? rotate:
-identity_set_ipv6         {}
+identity (action: set_ipv6)         {}
 // omit "address" → random unused address inside your /64, effective immediately
 
 // verify the change
 web_fetch                 { "url": "https://api.ipify.org?format=json" }
 ```
 
-The hygiene loop an agent can run autonomously: `identity_check_reputation` → if listed → `identity_set_ipv6` → re-check.
+The hygiene loop an agent can run autonomously: `identity (action: check_reputation)` → if listed → `identity (action: set_ipv6)` → re-check.
 
 **Honest notes:** these are datacenter-class IPs (Route6's own PI space) — sites that block by ASN class will still block them; rotation helps with per-IP blocks, not with that. IPv4-only destinations work transparently through DNS64/NAT64.
